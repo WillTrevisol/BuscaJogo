@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/home_dest">
+
+    <fragment
+        android:id="@+id/home_dest"
+        android:name="com.trevisol.buscajogo.presentation.home.HomeFragment"
+        android:label="Home" />
+
+    <fragment
+        android:id="@+id/search_dest"
+        android:name="com.trevisol.buscajogo.presentation.search.SearchFragment"
+        android:label="Search" />
+
+    <fragment
+        android:id="@+id/library_dest"
+        android:name="com.trevisol.buscajogo.presentation.library.LibraryFragment"
+        android:label="Library" />
+
+</navigation>
