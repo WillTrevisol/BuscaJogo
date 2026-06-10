@@ -1,5 +1,15 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.android)
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists() && localPropertiesFile.isFile) {
+    localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
 android {
@@ -31,6 +41,11 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
+    }
+    defaultConfig {
+        buildConfigField("String", "IS_THERE_ANY_DEAL_API_KEY", localProperties.getProperty("IS_THERE_ANY_DEAL_API_KEY") ?: "")
+        buildConfigField("String", "RAWG_API_KEY", localProperties.getProperty("RAWG_API_KEY") ?: "")
     }
 }
 
@@ -57,12 +72,14 @@ dependencies {
     // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // Coil
     implementation(libs.coil)
 
     // Hilt
     implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
