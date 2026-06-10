@@ -23,5 +23,13 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         
         binding.bottomNav.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.details_dest) {
+                binding.bottomNav.visibility = android.view.View.GONE
+            } else {
+                binding.bottomNav.visibility = android.view.View.VISIBLE
+            }
+        }
     }
 }

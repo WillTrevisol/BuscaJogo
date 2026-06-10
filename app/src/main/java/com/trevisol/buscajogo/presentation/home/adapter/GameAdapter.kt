@@ -9,19 +9,25 @@ import coil.load
 import com.trevisol.buscajogo.databinding.ItemGameBinding
 import com.trevisol.buscajogo.domain.model.Game
 
-class GameAdapter : ListAdapter<Game, GameAdapter.GameViewHolder>(GameDiffCallback()) {
+class GameAdapter(
+    private val onGameClick: (Game) -> Unit
+) : ListAdapter<Game, GameAdapter.GameViewHolder>(GameDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
         val binding = ItemGameBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return GameViewHolder(binding)
+        return GameViewHolder(binding, onGameClick)
     }
 
     override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class GameViewHolder(private val binding: ItemGameBinding) : RecyclerView.ViewHolder(binding.root) {
+    class GameViewHolder(
+        private val binding: ItemGameBinding,
+        private val onGameClick: (Game) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(game: Game) {
+            binding.root.setOnClickListener { onGameClick(game) }
             binding.tvGameName.text = game.name
             
             val score = game.metacritic

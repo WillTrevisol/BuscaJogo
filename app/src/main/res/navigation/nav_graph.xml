@@ -7,7 +7,11 @@
     <fragment
         android:id="@+id/home_dest"
         android:name="com.trevisol.buscajogo.presentation.home.HomeFragment"
-        android:label="Home" />
+        android:label="Home">
+        <action
+            android:id="@+id/action_home_dest_to_details_dest"
+            app:destination="@id/details_dest" />
+    </fragment>
 
     <fragment
         android:id="@+id/search_dest"
@@ -18,5 +22,14 @@
         android:id="@+id/library_dest"
         android:name="com.trevisol.buscajogo.presentation.library.LibraryFragment"
         android:label="Library" />
+
+    <fragment
+        android:id="@+id/details_dest"
+        android:name="com.trevisol.buscajogo.presentation.details.GameDetailsFragment"
+        android:label="Game Details">
+        <argument
+            android:name="gameId"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

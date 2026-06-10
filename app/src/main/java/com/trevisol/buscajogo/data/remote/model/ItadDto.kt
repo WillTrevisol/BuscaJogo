@@ -22,10 +22,17 @@ data class ItadAssetsDto(
 )
 
 data class ItadDealDto(
+    val shop: ItadShopDto,
     val price: ItadPriceDto,
     val regular: ItadPriceDto,
     val cut: Int,
-    val platforms: List<ItadPlatformDto>
+    val platforms: List<ItadPlatformDto>?,
+    val url: String?
+)
+
+data class ItadShopDto(
+    val id: Int,
+    val name: String
 )
 
 data class ItadPlatformDto(
@@ -36,4 +43,19 @@ data class ItadPlatformDto(
 data class ItadPriceDto(
     val amount: Double,
     val currency: String
+)
+
+data class ItadLookupResponseDto(
+    val found: Boolean,
+    val game: ItadGameInfoDto?
+)
+
+data class ItadGameInfoDto(
+    val id: String,
+    val title: String
+)
+
+data class ItadPriceResponseDto(
+    val id: String,
+    val deals: List<ItadDealDto>
 )

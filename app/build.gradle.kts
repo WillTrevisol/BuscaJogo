@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
+    kotlin("plugin.compose") version "2.1.0"
 }
 
 val localProperties = Properties()
@@ -42,6 +43,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
     defaultConfig {
         buildConfigField("String", "IS_THERE_ANY_DEAL_API_KEY", localProperties.getProperty("IS_THERE_ANY_DEAL_API_KEY") ?: "")
@@ -54,6 +56,16 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
 
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.coil.compose)
+
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
@@ -61,6 +73,7 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)

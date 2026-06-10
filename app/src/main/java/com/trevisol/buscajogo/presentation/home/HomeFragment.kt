@@ -7,6 +7,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
+import com.trevisol.buscajogo.R
 import com.trevisol.buscajogo.databinding.FragmentHomeBinding
 import com.trevisol.buscajogo.presentation.BaseFragment
 import com.trevisol.buscajogo.presentation.home.adapter.DealAdapter
@@ -19,7 +22,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
     private val viewModel: HomeViewModel by viewModels()
     private val dealAdapter = DealAdapter()
-    private val gameAdapter = GameAdapter()
+    private val gameAdapter = GameAdapter { game ->
+        findNavController().navigate(
+            R.id.details_dest,
+            bundleOf("gameId" to game.id)
+        )
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
