@@ -6,8 +6,10 @@ import com.trevisol.buscajogo.domain.model.Deal
 import com.trevisol.buscajogo.domain.model.Game
 import com.trevisol.buscajogo.domain.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,8 +27,28 @@ class HomeViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
+    private val _navigateToDetails = Channel<Int>()
+    val navigateToDetails = _navigateToDetails.receiveAsFlow()
+
+    private val _errorEvent = Channel<String>()
+    val errorEvent = _errorEvent.receiveAsFlow()
+
     init {
         fetchHomeData()
+    }
+
+    fun onDealClicked(deal: Deal) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.getGameIdByTitle(deal.title)
+                .onSuccess { id ->
+                    _navigateToDetails.send(id)
+                }
+                .onFailure { error ->
+                    _errorEvent.send(error.message ?: "Não foi possível encontrar este jogo")
+                }
+            _isLoading.value = false
+        }
     }
 
     private fun fetchHomeData() {

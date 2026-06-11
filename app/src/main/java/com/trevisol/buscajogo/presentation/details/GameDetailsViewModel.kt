@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.trevisol.buscajogo.domain.model.GameDetails
 import com.trevisol.buscajogo.domain.repository.GameRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +23,22 @@ class GameDetailsViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<GameDetailsUiState>(GameDetailsUiState.Loading)
     val uiState: StateFlow<GameDetailsUiState> = _uiState
 
+    private val _gameId = MutableStateFlow<Int?>(null)
+
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val isWishlisted: StateFlow<Boolean> = _gameId
+        .filterNotNull()
+        .flatMapLatest { id -> repository.isGameInWishlist(id) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    val isOwned: StateFlow<Boolean> = _gameId
+        .filterNotNull()
+        .flatMapLatest { id -> repository.isGameInCollection(id) }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
     fun loadGameDetails(id: Int) {
+        _gameId.value = id
         viewModelScope.launch {
             _uiState.value = GameDetailsUiState.Loading
             repository.getGameDetails(id)
@@ -34,6 +48,28 @@ class GameDetailsViewModel @Inject constructor(
                 .onFailure { error ->
                     _uiState.value = GameDetailsUiState.Error(error.message ?: "Erro desconhecido")
                 }
+        }
+    }
+
+    fun toggleWishlist() {
+        val state = uiState.value
+        if (state is GameDetailsUiState.Success) {
+            viewModelScope.launch {
+                repository.toggleWishlist(state.details)
+            }
+        }
+    }
+
+    fun toggleCollection() {
+        val state = uiState.value
+        if (state is GameDetailsUiState.Success) {
+            viewModelScope.launch {
+                if (isOwned.value) {
+                    repository.removeFromCollection(state.details.id)
+                } else {
+                    repository.addToCollection(state.details)
+                }
+            }
         }
     }
 }

@@ -14,7 +14,8 @@ interface ItadApi {
         @Query("key") apiKey: String,
         @Query("country") country: String = "BR",
         @Query("limit") limit: Int = 20,
-        @Query("shops") shops: String? = null
+        @Query("shops") shops: String? = null,
+        @Query("filter") filter: String? = null
     ): ItadDealsResponseDto
 
     @GET("games/lookup/v1")

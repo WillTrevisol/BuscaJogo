@@ -10,7 +10,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Computer
+import androidx.compose.material.icons.filled.CreateNewFolder
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.ShoppingBag
+import androidx.compose.material.icons.filled.SportsEsports
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,7 +43,11 @@ import kotlin.math.min
 @Composable
 fun GameDetailsScreen(
     state: GameDetailsUiState,
-    onBack: () -> Unit
+    isWishlisted: Boolean,
+    isOwned: Boolean,
+    onBack: () -> Unit,
+    onWishlistClick: () -> Unit,
+    onCollectionClick: () -> Unit
 ) {
     val lavender = colorResource(id = R.color.primary)
     val darkSurface = colorResource(id = R.color.background)
@@ -48,7 +57,7 @@ fun GameDetailsScreen(
         containerColor = darkSurface,
         bottomBar = {
             if (state is GameDetailsUiState.Success) {
-                BottomActionBar(lavender)
+                BottomActionBar(lavender, isOwned, onCollectionClick)
             }
         }
     ) { innerPadding ->
@@ -128,8 +137,12 @@ fun GameDetailsScreen(
                             shape = CircleShape,
                             modifier = Modifier.align(Alignment.CenterEnd)
                         ) {
-                            IconButton(onClick = { /* Favoritar */ }) {
-                                Icon(Icons.Default.FavoriteBorder, "Favoritar", tint = Color.White)
+                            IconButton(onClick = onWishlistClick) {
+                                Icon(
+                                    imageVector = if (isWishlisted) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = "Favoritar",
+                                    tint = if (isWishlisted) Color.Red else Color.White
+                                )
                             }
                         }
                     }
@@ -145,25 +158,29 @@ fun GameDetailsScreen(
 }
 
 @Composable
-fun BottomActionBar(lavender: Color) {
+fun BottomActionBar(lavender: Color, isOwned: Boolean, onCollectionClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
+        val buttonColor = if (isOwned) Color.Gray else lavender
+        val buttonText = if (isOwned) "Remover da Coleção" else "Adicionar à Coleção"
+        val buttonIcon = if (isOwned) Icons.Default.Favorite else Icons.Default.CreateNewFolder
+
         ExtendedFloatingActionButton(
-            onClick = { /* Lógica de coleção */ },
-            containerColor = lavender,
-            contentColor = colorResource(id = R.color.on_primary),
+            onClick = onCollectionClick,
+            containerColor = buttonColor,
+            contentColor = if (isOwned) Color.White else colorResource(id = R.color.on_primary),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
             shape = RoundedCornerShape(28.dp)
         ) {
-            Icon(Icons.Default.CreateNewFolder, contentDescription = null)
+            Icon(buttonIcon, contentDescription = null)
             Spacer(Modifier.width(8.dp))
-            Text("Adicionar à Coleção", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text(buttonText, fontWeight = FontWeight.Bold, fontSize = 18.sp)
         }
     }
 }

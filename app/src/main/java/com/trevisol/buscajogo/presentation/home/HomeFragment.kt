@@ -2,6 +2,7 @@ package com.trevisol.buscajogo.presentation.home
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,7 +22,9 @@ import kotlinx.coroutines.launch
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val viewModel: HomeViewModel by viewModels()
-    private val dealAdapter = DealAdapter()
+    private val dealAdapter = DealAdapter { deal ->
+        viewModel.onDealClicked(deal)
+    }
     private val gameAdapter = GameAdapter { game ->
         findNavController().navigate(
             R.id.details_dest,
@@ -56,6 +59,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                 launch {
                     viewModel.isLoading.collect { isLoading ->
                         binding.progressBar.isVisible = isLoading
+                    }
+                }
+                launch {
+                    viewModel.navigateToDetails.collect { gameId ->
+                        findNavController().navigate(
+                            R.id.details_dest,
+                            bundleOf("gameId" to gameId)
+                        )
+                    }
+                }
+                launch {
+                    viewModel.errorEvent.collect { message ->
+                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

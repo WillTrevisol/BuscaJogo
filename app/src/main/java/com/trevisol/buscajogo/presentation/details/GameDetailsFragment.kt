@@ -27,9 +27,16 @@ class GameDetailsFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                val isWishlisted by viewModel.isWishlisted.collectAsStateWithLifecycle()
+                val isOwned by viewModel.isOwned.collectAsStateWithLifecycle()
+
                 GameDetailsScreen(
                     state = uiState,
-                    onBack = { findNavController().popBackStack() }
+                    isWishlisted = isWishlisted,
+                    isOwned = isOwned,
+                    onBack = { findNavController().popBackStack() },
+                    onWishlistClick = viewModel::toggleWishlist,
+                    onCollectionClick = viewModel::toggleCollection
                 )
             }
         }

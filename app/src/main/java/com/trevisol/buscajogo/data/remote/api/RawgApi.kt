@@ -11,7 +11,8 @@ interface RawgApi {
     suspend fun getGames(
         @Query("key") apiKey: String,
         @Query("ordering") ordering: String = "-added",
-        @Query("page_size") pageSize: Int = 20
+        @Query("page_size") pageSize: Int = 20,
+        @Query("search") search: String? = null
     ): RawgResponse<RawgGameDto>
 
     @GET("games/{id}")
@@ -25,4 +26,12 @@ interface RawgApi {
         @retrofit2.http.Path("id") id: Int,
         @Query("key") apiKey: String
     ): RawgResponse<com.trevisol.buscajogo.data.remote.model.RawgPurchaseLinkDto>
+
+    @GET("games")
+    suspend fun getGameByTitle(
+        @Query("key") apiKey: String,
+        @Query("search") title: String,
+        @Query("search_exact") exact: Boolean = true,
+        @Query("page_size") pageSize: Int = 1
+    ): RawgResponse<RawgGameDto>
 }

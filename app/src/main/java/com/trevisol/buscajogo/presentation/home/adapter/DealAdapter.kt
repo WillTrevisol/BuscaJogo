@@ -13,19 +13,25 @@ import com.trevisol.buscajogo.R
 import com.trevisol.buscajogo.databinding.ItemDealBinding
 import com.trevisol.buscajogo.domain.model.Deal
 
-class DealAdapter : ListAdapter<Deal, DealAdapter.DealViewHolder>(DealDiffCallback()) {
+class DealAdapter(
+    private val onDealClick: (Deal) -> Unit
+) : ListAdapter<Deal, DealAdapter.DealViewHolder>(DealDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DealViewHolder {
         val binding = ItemDealBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return DealViewHolder(binding)
+        return DealViewHolder(binding, onDealClick)
     }
 
     override fun onBindViewHolder(holder: DealViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class DealViewHolder(private val binding: ItemDealBinding) : RecyclerView.ViewHolder(binding.root) {
+    class DealViewHolder(
+        private val binding: ItemDealBinding,
+        private val onDealClick: (Deal) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(deal: Deal) {
+            binding.root.setOnClickListener { onDealClick(deal) }
             binding.tvDealTitle.text = deal.title
             binding.tvSalePrice.text = "R$ ${deal.salePrice}"
             binding.tvNormalPrice.text = "R$ ${deal.normalPrice}"
@@ -36,7 +42,7 @@ class DealAdapter : ListAdapter<Deal, DealAdapter.DealViewHolder>(DealDiffCallba
             }
 
             // Clear previous platforms
-            binding.llPlatforms.removeAllViews()
+            binding.cgPlatforms.removeAllViews()
 
             // Add platform tags
             deal.platforms.forEach { platform ->
@@ -44,16 +50,10 @@ class DealAdapter : ListAdapter<Deal, DealAdapter.DealViewHolder>(DealDiffCallba
                     text = platform
                     textSize = 10f
                     setTextColor(ContextCompat.getColor(context, R.color.on_surface_variant))
-                    setPadding(8, 2, 8, 2)
+                    setPadding(12, 4, 12, 4)
                     background = ContextCompat.getDrawable(context, R.drawable.bg_tag)
                 }
-                val params = ViewGroup.MarginLayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                ).apply {
-                    marginEnd = 8
-                }
-                binding.llPlatforms.addView(tvPlatform, params)
+                binding.cgPlatforms.addView(tvPlatform)
             }
         }
     }
