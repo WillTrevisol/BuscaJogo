@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BuscaJogo</string>
-    <string name="home">Home</string>
-    <string name="search">Search</string>
-    <string name="library">Library</string>
+    <string name="home">Início</string>
+    <string name="search">Pesquisar</string>
+    <string name="library">Biblioteca</string>
     <string name="placeholder">Placeholder</string>
 </resources>
